@@ -1,0 +1,3 @@
+[submodule "pontoon"]
+	path = pontoon
+	url = https://github.com/mozilla/pontoon.git
