@@ -83,7 +83,7 @@ affinity: {}
 
 rabbitmq:
   persistence:
-    enabled: true
+    enabled: false
   auth:
     username: admin
     password: secret
@@ -92,4 +92,4 @@ postgresql-ha:
   password: secret
   database: pontoon
   persistence:
-    enabled: true
+    enabled: false

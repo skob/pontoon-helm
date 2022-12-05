@@ -1,6 +1,6 @@
 FROM node:16.18.1 as njs-build
 WORKDIR /app
-COPY ./pontoon/package*json .
+COPY ./pontoon/package*json ./
 RUN npm i
 
 COPY ./pontoon/babel.config.json .
@@ -36,13 +36,14 @@ RUN apt-get update \
 
 RUN groupadd -r pontoon && useradd --no-log-init -r -m -g pontoon pontoon
 RUN chown -R pontoon:pontoon /app
-USER pontoon
 
 COPY --chown=pontoon:pontoon ./pontoon/ /app/
 COPY --chown=pontoon:pontoon --from=njs-build /app/tag-admin/dist /app/tag-admin/dist
 COPY --chown=pontoon:pontoon --from=njs-build /app/translate/dist /app/translate/dist
 COPY --chown=pontoon:pontoon --from=njs-build /app/translate/public /app/translate/public
 COPY --chown=pontoon:pontoon --from=njs-build /app/node_modules /app/node_modules
+
+USER pontoon
 
 ARG SECRET_KEY=non-existing
 ARG DATABASE_URL=postgres://pontoon:asdf@postgresql/pontoon
