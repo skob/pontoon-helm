@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Job
+metadata:
+  name: {{ include "pontoon-helm.fullname" . }}-update-ap
+  labels:
+    {{- include "pontoon-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/type: uap
+  annotations:
+    helm.sh/hook: 'post-upgrade,post-install'
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: '15'
+spec:
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "pontoon-helm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/type: uap
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "pontoon-helm.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: update-auth-providers
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python", "./manage.py", "update_auth_providers"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ template "pontoon-helm.name" . }}
+            - configMapRef:
+                name: {{ template "pontoon-helm.name" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
