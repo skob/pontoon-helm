@@ -22,8 +22,8 @@ stages:
        -f ./pontoon-helm/stages/${ENV}/secrets.yaml
        --set-string image.repository=${IMAGE}
        --set-string image.tag=${CI_COMMIT_SHORT_SHA}
-       --set-string fullnameOverride=accsmon
-       --set-string nameOverride=accsmon
+       --set-string fullnameOverride=pontoon
+       --set-string nameOverride=pontoon
 
 lint dev:
   extends: .lint
@@ -60,7 +60,7 @@ build:
     - echo $CI_PGP_SECRET | base64 -d | gpg --import
     - echo ${KZEUS_DEPLOYER} | base64 -d > ${KUBECONFIG}
   script:
-    - helm secrets upgrade --install accsmon-${ENV} ./pontoon-helm
+    - helm secrets upgrade --install pontoon-${ENV} ./pontoon-helm
       --namespace ${NAMESPACE} -f ./pontoon-helm/values.yaml
       -f ./pontoon-helm/stages/${ENV}/values.yaml
       -f ./pontoon-helm/stages/${ENV}/secrets.yaml
