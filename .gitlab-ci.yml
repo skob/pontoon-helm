@@ -8,23 +8,6 @@ stages:
   - build
   - deploy
 
-build:
-  image: docker
-  stage: build
-  tags:
-    - selectel
-    - docker
-  before_script:
-    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token $CI_REGISTRY --password-stdin
-  script:
-    - apk add git
-    - git submodule init
-    - git submodule update
-    - docker build --compress --force-rm --pull --tag ${IMAGE}:${CI_COMMIT_SHORT_SHA} --target base .
-    - docker build --compress --force-rm --pull --tag ${IMAGE}-bot:${CI_COMMIT_SHORT_SHA} --target bot .
-    - docker push $IMAGE:${CI_COMMIT_SHORT_SHA}
-    - docker push ${IMAGE}-bot:${CI_COMMIT_SHORT_SHA}
-
 .lint:
   image: skob/deploy-image
   stage: lint
@@ -49,3 +32,18 @@ lint dev:
     ENV: dev
     NAMESPACE: pontoon
     KUBECONFIG: /tmp/kube
+
+build:
+  image: docker
+  stage: build
+  tags:
+    - selectel
+    - docker
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token $CI_REGISTRY --password-stdin
+  script:
+    - apk add git
+    - git submodule init
+    - git submodule update
+    - docker build --compress --force-rm --pull --tag ${IMAGE}:${CI_COMMIT_SHORT_SHA} .
+    - docker push $IMAGE:${CI_COMMIT_SHORT_SHA}
