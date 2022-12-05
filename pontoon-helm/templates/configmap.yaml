@@ -17,17 +17,4 @@ metadata:
   labels:
     {{- include "pontoon-helm.labels" . | nindent 4 }}
 data:
-  nginx.conf: |
-      server {
-        listen 0.0.0.0:8080 default ;
-        server_name _ ;
-        location /static {
-            root /var/www/ ;
-        }
-        location / {
-            proxy_pass http://127.0.0.1:8000 ;
-            proxy_set_header "Host" $host ;
-            proxy_set_header "x-real-ip" $remote_addr ;
-        }
-      }
-
+{{ (.Files.Glob "files/nginx.conf").AsConfig | indent 2 }}
