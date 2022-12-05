@@ -34,7 +34,7 @@ spec:
               imagePullPolicy: {{ $.Values.image.pullPolicy }}
               command: {{ $job.command }}
               resources:
-                {{- toYaml $.Values.resources | nindent 14 }}
+                {{- toYaml $.Values.resources | nindent 16 }}
               envFrom:
                 - secretRef:
                     name: {{ template "pontoon-helm.name" $ }}
