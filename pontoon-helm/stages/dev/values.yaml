@@ -67,17 +67,20 @@ tolerations: []
 
 affinity: {}
 
+global:
+  postgresql:
+    database: pontoon
+    password: 6lBz7pfzUR
+
 rabbitmq:
   auth:
     username: admin
     password: secret
-postgresql-ha:
-  password: secret
 
 env:
   open:
     SITE_URL: pontoon.zt.k8s.jwi
   secrets:
-    DATABASE_URL: postgres://postgres:secret@pontoon-postgresql-ha-postgresql/pontoon
+    DATABASE_URL: postgres://postgres:6lBz7pfzUR@pontoon-postgresql-ha-postgresql/pontoon
     BROKER_URL: amqp://admin:secret@pontoon-rabbitmq:5672//
     SECRET_KEY: T7IFqwm32CoFiNjTvVHx0EEjZaIgL
