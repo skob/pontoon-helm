@@ -20,6 +20,7 @@ spec:
         {{- include "pontoon-helm.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/type: uap
     spec:
+      restartPolicy: Never
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
