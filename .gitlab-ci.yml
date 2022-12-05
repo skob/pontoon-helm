@@ -11,7 +11,6 @@ stages:
   image: skob/deploy-image
   stage: lint
   tags:
-    - selectel
     - k8s
   before_script:
     - echo $CI_PGP_SECRET | base64 -d | gpg --import
@@ -37,7 +36,6 @@ build:
   image: docker
   stage: build
   tags:
-    - selectel
     - docker
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token $CI_REGISTRY --password-stdin
@@ -52,7 +50,6 @@ build:
   image: skob/deploy-image
   stage: deploy
   tags:
-    - selectel
     - k8s
   environment:
     name: k8s-${ENV}
