@@ -1,0 +1,51 @@
+variables:
+  # DOCKER_HOST: tcp://docker-dind.infra:2375
+  DOCKER_DRIVER: overlay2
+  IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
+
+stages:
+  - lint
+  - build
+  - deploy
+
+build:
+  image: docker
+  stage: build
+  tags:
+    - selectel
+    - docker
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token $CI_REGISTRY --password-stdin
+  script:
+    - apk add git
+    - git submodule init
+    - git submodule update
+    - docker build --compress --force-rm --pull --tag ${IMAGE}:${CI_COMMIT_SHORT_SHA} --target base .
+    - docker build --compress --force-rm --pull --tag ${IMAGE}-bot:${CI_COMMIT_SHORT_SHA} --target bot .
+    - docker push $IMAGE:${CI_COMMIT_SHORT_SHA}
+    - docker push ${IMAGE}-bot:${CI_COMMIT_SHORT_SHA}
+
+.lint:
+  image: skob/deploy-image
+  stage: lint
+  tags:
+    - selectel
+    - k8s
+  before_script:
+    - echo $CI_PGP_SECRET | base64 -d | gpg --import
+    - echo ${KZEUS_DEPLOYER} | base64 -d > ${KUBECONFIG}
+  script:
+    - helm secrets lint --strict pontoon-helm -f ./pontoon-helm/values.yaml
+       -f ./pontoon-helm/stages/${ENV}/values.yaml
+       -f ./pontoon-helm/stages/${ENV}/secrets.yaml
+       --set-string image.repository=${IMAGE}
+       --set-string image.tag=${CI_COMMIT_SHORT_SHA}
+       --set-string fullnameOverride=accsmon
+       --set-string nameOverride=accsmon
+
+lint dev:
+  extends: .lint
+  variables:
+    ENV: dev
+    NAMESPACE: pontoon
+    KUBECONFIG: /tmp/kube

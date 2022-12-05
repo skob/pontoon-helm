@@ -44,7 +44,7 @@ COPY --chown=pontoon:pontoon --from=njs-build /app/translate/dist /app/translate
 COPY --chown=pontoon:pontoon --from=njs-build /app/translate/public /app/translate/public
 COPY --chown=pontoon:pontoon --from=njs-build /app/node_modules /app/node_modules
 
-ENV SECRET_KEY=non-existing
-ENV DATABASE_URL=postgres://pontoon:asdf@postgresql/pontoon
+ARG SECRET_KEY=non-existing
+ARG DATABASE_URL=postgres://pontoon:asdf@postgresql/pontoon
 
 RUN python manage.py collectstatic --no-input
