@@ -4,6 +4,7 @@ metadata:
   name: {{ include "pontoon-helm.fullname" . }}
   labels:
     {{- include "pontoon-helm.labels" . | nindent 4 }}
+    app.kubernetes.io/type: web
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -11,6 +12,7 @@ spec:
   selector:
     matchLabels:
       {{- include "pontoon-helm.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/type: web
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,6 +21,7 @@ spec:
       {{- end }}
       labels:
         {{- include "pontoon-helm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/type: web
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
