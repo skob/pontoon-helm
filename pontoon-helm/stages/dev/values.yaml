@@ -33,7 +33,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: pontoon.zt.k8s.jwi
+    - host: pontoon.zt-sel.k8s.jwi
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -67,20 +67,28 @@ tolerations: []
 
 affinity: {}
 
-global:
+postgresql-ha:
+  nameOverride: postgresql
+  fullnameOverride: postgresql
   postgresql:
     database: pontoon
     password: 6lBz7pfzUR
+    repmgrPassword: W34h5dXxaT
+  pgpool:
+    adminPassword: a3UfXbtMAK
 
 rabbitmq:
+  nameOverride: rabbit
+  fullnameOverride: rabbit
   auth:
     username: admin
     password: secret
 
 env:
   open:
-    SITE_URL: pontoon.zt.k8s.jwi
+    SITE_URL: pontoon.zt-sel.k8s.jwi
+    ALLOWED_HOSTS: pontoon.zt-sel.k8s.jwi
   secrets:
-    DATABASE_URL: postgres://postgres:6lBz7pfzUR@pontoon-postgresql-ha-postgresql/pontoon
-    BROKER_URL: amqp://admin:secret@pontoon-rabbitmq:5672//
+    DATABASE_URL: postgres://postgres:6lBz7pfzUR@postgresql/pontoon
+    BROKER_URL: amqp://admin:secret@rabbit:5672//
     SECRET_KEY: T7IFqwm32CoFiNjTvVHx0EEjZaIgL
