@@ -10,7 +10,7 @@ COPY ./pontoon/tag-admin/ ./tag-admin
 RUN npm run build -w translate
 RUN npm run build -w tag-admin
 
-FROM python:3.9-bullseye AS staticbuild
+FROM python:3.9-bullseye AS server
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HGPYTHON3=1

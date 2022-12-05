@@ -61,6 +61,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["gunicorn", "pontoon.wsgi:application", "-t", "120", "--log-file", "-"]
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
