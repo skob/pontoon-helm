@@ -27,26 +27,47 @@ spec:
       serviceAccountName: {{ include "pontoon-helm.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: staticdir
+          emptyDir: {}
+        - name: {{ template "pontoon-helm.name" . }}-nginx
+          configMap:
+            name: {{ template "pontoon-helm.name" . }}-nginx
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+      initContainers:
+        - name: populate-static
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: [ "cp", "-rp", "/app/static", "/migrate" ]
+          volumeMounts:
+          - name: staticdir
+            mountPath: "/migrate"
       containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: nginx
+              containerPort: 8000
+              protocol: TCP
+          volumeMounts:
+            - name: {{ template "pontoon-helm.name" . }}-nginx
+              mountPath: /etc/nginx/conf.d/
+            - name: staticdir
+              mountPath: /var/www
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ template "pontoon-helm.name" . }}
+            - configMapRef:
+                name: {{ template "pontoon-helm.name" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

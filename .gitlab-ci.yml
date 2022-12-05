@@ -1,5 +1,4 @@
 variables:
-  # DOCKER_HOST: tcp://docker-dind.infra:2375
   DOCKER_DRIVER: overlay2
   IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
 
@@ -47,3 +46,34 @@ build:
     - git submodule update
     - docker build --compress --force-rm --pull --tag ${IMAGE}:${CI_COMMIT_SHORT_SHA} .
     - docker push $IMAGE:${CI_COMMIT_SHORT_SHA}
+
+.deploy:
+  image: skob/deploy-image
+  stage: deploy
+  tags:
+    - selectel
+    - k8s
+  environment:
+    name: k8s-${ENV}
+    url: ${URL}
+  before_script:
+    - echo $CI_PGP_SECRET | base64 -d | gpg --import
+    - echo ${KZEUS_DEPLOYER} | base64 -d > ${KUBECONFIG}
+  script:
+    - helm secrets upgrade --install accsmon-${ENV} ./pontoon-helm
+      --namespace ${NAMESPACE} -f ./pontoon-helm/values.yaml
+      -f ./pontoon-helm/stages/${ENV}/values.yaml
+      -f ./pontoon-helm/stages/${ENV}/secrets.yaml
+      --set-string image.repository=$IMAGE
+      --set-string image.tag=${CI_COMMIT_SHORT_SHA}
+      --set-string fullnameOverride=pontoon
+      --set-string nameOverride=pontoon
+
+deploy dev:
+  extends: .deploy
+  variables:
+    ENV: dev
+    URL: http://pontoon.zt.k8s.jwi
+    NAMESPACE: pontoon
+    KUBECONFIG: /tmp/kube
+  when: manual

@@ -34,7 +34,7 @@ RUN apt-get update \
         nodejs \
     && apt-get autoremove -y
 
-RUN groupadd -r pontoon && useradd --no-log-init -r -m -g pontoon pontoon
+RUN groupadd -r pontoon --gid=1000 && useradd --uid=1000 --no-log-init -r -m -g pontoon pontoon
 RUN chown -R pontoon:pontoon /app
 
 COPY --chown=pontoon:pontoon ./pontoon/ /app/
