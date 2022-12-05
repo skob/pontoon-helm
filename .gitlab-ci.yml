@@ -17,10 +17,10 @@ stages:
     - echo $CI_PGP_SECRET | base64 -d | gpg --import
     - echo ${KZEUS_DEPLOYER} | base64 -d > ${KUBECONFIG}
   script:
+    - helm dependency update
     - helm secrets lint --strict pontoon-helm -f ./pontoon-helm/values.yaml
        -f ./pontoon-helm/stages/${ENV}/values.yaml
        -f ./pontoon-helm/stages/${ENV}/cronjobs.yaml
-       -f ./pontoon-helm/stages/${ENV}/secrets.yaml
        --set-string image.repository=${IMAGE}
        --set-string image.tag=${CI_COMMIT_SHORT_SHA}
        --set-string fullnameOverride=pontoon
@@ -61,11 +61,11 @@ build:
     - echo $CI_PGP_SECRET | base64 -d | gpg --import
     - echo ${KZEUS_DEPLOYER} | base64 -d > ${KUBECONFIG}
   script:
+    - helm dependency update
     - helm secrets upgrade --install pontoon-${ENV} ./pontoon-helm
       --namespace ${NAMESPACE} -f ./pontoon-helm/values.yaml
       -f ./pontoon-helm/stages/${ENV}/values.yaml
       -f ./pontoon-helm/stages/${ENV}/cronjobs.yaml
-      -f ./pontoon-helm/stages/${ENV}/secrets.yaml
       --set-string image.repository=$IMAGE
       --set-string image.tag=${CI_COMMIT_SHORT_SHA}
       --set-string fullnameOverride=pontoon

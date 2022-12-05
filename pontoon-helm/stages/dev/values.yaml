@@ -95,3 +95,6 @@ env:
     DATABASE_URL: postgres://postgres:6lBz7pfzUR@postgresql-pgpool/pontoon
     RABBITMQ_URL: amqp://admin:secret@rabbit:5672//
     SECRET_KEY: T7IFqwm32CoFiNjTvVHx0EEjZaIgL
+
+registry:
+  auth: "some auth"
