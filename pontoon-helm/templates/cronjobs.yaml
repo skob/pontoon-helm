@@ -32,7 +32,10 @@ spec:
             - name: {{ $job.name }}
               image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
               imagePullPolicy: {{ $.Values.image.pullPolicy }}
-              command: {{ $job.command }}
+              command: 
+                - sh
+                - "-c"
+                - "{{ $job.command }}"
               resources:
                 {{- toYaml $.Values.resources | nindent 16 }}
               envFrom:

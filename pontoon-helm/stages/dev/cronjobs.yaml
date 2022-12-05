@@ -5,7 +5,7 @@ jobs:
     successfulJobsHistoryLimit: 3
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-    command: ["python", "manage.py", "sync_projects"]
+    command: "python manage.py sync_projects"
     suspend: true
   - name: send-deadline-notifications
     schedule: "0 0 * * *"
@@ -13,7 +13,7 @@ jobs:
     successfulJobsHistoryLimit: 3
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-    command: ["python", "manage.py", "send_deadline_notifications"]
+    command: "python manage.py send_deadline_notifications"
     suspend: true
   - name: send-suggestion-notifications
     schedule: "0 0 * * 6"
@@ -21,7 +21,7 @@ jobs:
     successfulJobsHistoryLimit: 3
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-    command: ["python", "manage.py", "send_suggestion_notifications"]
+    command: "python manage.py send_suggestion_notifications"
     suspend: true
   - name: send-review-notifications
     schedule: "0 6 * * *"
@@ -29,7 +29,7 @@ jobs:
     successfulJobsHistoryLimit: 3
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-    command: ["python", "manage.py", "send_review_notifications"]
+    command: "python manage.py send_review_notifications"
     suspend: true
   - name: collect-insights
     schedule: "0 7 * * *"
@@ -37,7 +37,7 @@ jobs:
     successfulJobsHistoryLimit: 3
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-    command: ["python", "manage.py", "collect_insights"]
+    command: "python manage.py collect_insights"
     suspend: true
   - name: clear-old-sync-logs
     schedule: "0 23 * * *"
@@ -45,5 +45,5 @@ jobs:
     successfulJobsHistoryLimit: 3
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-    command: ["python", "manage.py", "clear_old_sync_logs"]
+    command: "python manage.py clear_old_sync_logs"
     suspend: true
