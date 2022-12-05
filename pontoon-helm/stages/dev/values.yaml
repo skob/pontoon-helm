@@ -89,6 +89,6 @@ env:
     SITE_URL: pontoon.zt-sel.k8s.jwi
     ALLOWED_HOSTS: pontoon.zt-sel.k8s.jwi
   secrets:
-    DATABASE_URL: postgres://postgres:6lBz7pfzUR@postgresql/pontoon
+    DATABASE_URL: postgres://postgres:6lBz7pfzUR@postgresql-pgpool/pontoon
     BROKER_URL: amqp://admin:secret@rabbit:5672//
     SECRET_KEY: T7IFqwm32CoFiNjTvVHx0EEjZaIgL
